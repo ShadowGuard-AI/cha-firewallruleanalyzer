@@ -156,6 +156,9 @@ def analyze_system_configuration(config_file, benchmark_file, schema_file=None):
         with open(config_file, 'r') as f:
             config_content = f.read()
 
+        if not isinstance(benchmark_data, dict):
+            raise FirewallAnalyzerError("Benchmark file did not contain a mapping at the top level.")
+
         # Iterate through benchmark rules and check against configuration
         for rule in benchmark_data.get('rules', []):
             description = rule.get('description', 'No Description')
@@ -166,7 +169,17 @@ def analyze_system_configuration(config_file, benchmark_file, schema_file=None):
             if check:
                 # Perform the check (basic string search for now, enhance with regex/parsing)
                 if isinstance(check, str):
-                    if re.search(check, config_content, re.MULTILINE):
+                    # One bad pattern in the benchmark file should cost
+                    # that rule its check, not the whole run: re.error is
+                    # not one of the exceptions this function converts,
+                    # so a single '[unclosed' used to end the analysis.
+                    try:
+                        matched = re.search(check, config_content, re.MULTILINE)
+                    except re.error as e:
+                        logging.warning(f"Invalid regex in benchmark check '{check}': {e}")
+                        findings.append({"description": description, "severity": severity, "recommendation": recommendation, "check_failed": f"Invalid regex: {check}"})
+                        continue
+                    if matched:
                         logging.debug(f"Check '{check}' passed for rule: {description}")
                     else:
                         findings.append({"description": description, "severity": severity, "recommendation": recommendation, "check_failed": check})
@@ -230,7 +243,9 @@ def generate_report(findings, output_file):
 
     except Exception as e:
         logging.error(f"Error generating report: {e}")
-        print(f"Error generating report: {e}") #Fallback print in case logging fails
+        # Raising here matters: swallowing the error let main print
+        # 'analysis completed' and exit 0 with no report on disk.
+        raise FirewallAnalyzerError(f"Error generating report: {e}") from e
 
 
 
