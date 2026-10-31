@@ -74,6 +74,52 @@ def validate_json_schema(json_data, schema_file):
         return False
 
 
+def _rule_option(line, option):
+    """Return the value after a short option in a rule line, or 'any'."""
+    match = re.search(r"(?:^|\s)" + re.escape(option) + r"\s+(\S+)", line)
+    return match.group(1) if match else "any"
+
+
+def detect_rule_conflicts(config_content):
+    """
+    Detect basic rule conflicts in the rule lines this tool parses.
+
+    Two checks, both limited to what the parsed lines actually carry:
+    duplicate rules (the same rule line appearing more than once), and
+    conflicting actions (rules with the same chain, source, destination,
+    protocol, and destination port but different -j actions).
+    """
+    findings = []
+    lines = [line.strip() for line in config_content.splitlines()
+             if line.strip() and not line.strip().startswith("#")]
+
+    seen = {}
+    for line in lines:
+        if "-A " in line or "firewall-cmd" in line:
+            seen[line] = seen.get(line, 0) + 1
+    for line, count in seen.items():
+        if count > 1:
+            findings.append({"rule": f"Duplicate rule found ({count} times): {line}", "severity": "Medium", "recommendation": "Remove the duplicate copies so the rule set states each rule once."})
+
+    action_groups = {}
+    for line in lines:
+        chain_match = re.search(r"-A\s+(\S+)", line)
+        action_match = re.search(r"(?:^|\s)-j\s+(\S+)", line)
+        if not chain_match or not action_match:
+            continue
+        dport_match = re.search(r"--dport\s+(\S+)", line)
+        key = (chain_match.group(1), _rule_option(line, "-s"),
+               _rule_option(line, "-d"), _rule_option(line, "-p"),
+               dport_match.group(1) if dport_match else "any")
+        action_groups.setdefault(key, set()).add(action_match.group(1))
+    for key, actions in action_groups.items():
+        if len(actions) > 1:
+            chain, source, destination, protocol, dport = key
+            findings.append({"rule": f"Conflicting rules for chain {chain}, source {source}, destination {destination}, protocol {protocol}, port {dport}: actions {', '.join(sorted(actions))}", "severity": "High", "recommendation": "Keep one action for this source, destination, protocol, and port, and remove the conflicting rules."})
+
+    return findings
+
+
 def analyze_firewall_rules(firewall_config_file):
     """
     Analyzes firewall rules from a configuration file (iptables or firewalld).
@@ -103,14 +149,18 @@ def analyze_firewall_rules(firewall_config_file):
             for rule in potential_vulnerable_rules:
                 findings.append({"rule": f"Potential vulnerable rule: All traffic accepted on port {rule[1]}", "severity":"Medium", "recommendation": "Restrict to specific source IPs"})
 
+            findings.extend(detect_rule_conflicts(config_content))
+
         elif "firewall-cmd" in config_content:
             logging.info("Analyzing firewalld configuration.")
             # Example: Detect public zone usage (generally discouraged)
             public_zone_rules = re.findall(r"zone=public", config_content)
             if public_zone_rules:
                 findings.append({"rule": "Public zone is in use", "severity": "Medium", "recommendation": "Review and restrict the public zone or use a more restrictive zone."})
+            findings.extend(detect_rule_conflicts(config_content))
         else:
-            logging.warning("Firewall configuration type not detected.  Basic analysis only.")
+            logging.warning("Firewall configuration type not detected. No analysis performed.")
+            findings.append({"rule": "Firewall configuration type not detected. No analysis performed.", "severity": "Error", "recommendation": "Provide a file containing iptables or firewall-cmd rules.", "type_not_detected": True})
 
     except FileNotFoundError:
         logging.error(f"Firewall configuration file not found: {firewall_config_file}")
@@ -262,6 +312,10 @@ def main():
             logging.info("Starting firewall analysis...")
             findings = analyze_firewall_rules(args.firewall_config)
             generate_report(findings, args.output)
+            if any(finding.get("type_not_detected") for finding in findings):
+                logging.error("Firewall configuration type not detected. No analysis performed.")
+                print("Error: Firewall configuration type not detected. No analysis performed.")
+                sys.exit(1)
             logging.info("Firewall analysis completed.")
         elif args.mode == 'benchmark':
             logging.info("Starting benchmark analysis...")
