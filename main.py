@@ -108,6 +108,12 @@ def detect_rule_conflicts(config_content):
         if not chain_match or not action_match:
             continue
         dport_match = re.search(r"--dport\s+(\S+)", line)
+        # The conflict key leaves out the interface, the source port,
+        # and any match extensions on the line, so two rules that
+        # differ only in those, ACCEPT on eth0 and DROP on eth1, group
+        # together as a conflict that is not one. The key is what the
+        # line parser can see plainly, and its limits are the finding's
+        # limits.
         key = (chain_match.group(1), _rule_option(line, "-s"),
                _rule_option(line, "-d"), _rule_option(line, "-p"),
                dport_match.group(1) if dport_match else "any")
@@ -136,10 +142,20 @@ def analyze_firewall_rules(firewall_config_file):
         with open(firewall_config_file, 'r') as f:
             config_content = f.read()
 
-        # Basic check for common firewall commands. Extend as needed
+        # The format test is a substring search over the whole file.
+        # A comment mentioning iptables sends a firewalld file down
+        # the iptables branch, and an iptables-save file whose text
+        # never contains the word falls past both branches into the
+        # not detected finding below. The content decides, not the
+        # file's name or its actual structure.
         if "iptables" in config_content:
             logging.info("Analyzing iptables configuration.")
-            # Example: Detect overly permissive rules (allowing all traffic)
+            # The pattern wants the action immediately after the chain
+            # name, which is exactly the shape of an accept everything
+            # rule. An accept rule carrying any option at all, a
+            # protocol, a source, an interface, does not match this
+            # string, so permissiveness with qualifiers is judged by
+            # the port check below and the conflict pass, not here.
             overly_permissive_rules = re.findall(r"-A INPUT -j ACCEPT", config_content)
             if overly_permissive_rules:
                 findings.append({"rule": "Overly permissive INPUT rule found (ACCEPT all)", "severity": "High", "recommendation": "Review and restrict the INPUT chain to specific ports/protocols."})
