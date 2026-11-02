@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="A rooftop in three depths: the wedding figures cross the street once slowly far below, the brush rises and descends in the nearest pot with a thinning fall of soot, and the day book page corner lifts and settles under its brass button">
+<rect x="0" y="0" width="1200" height="300" fill="#d8a05e"/>
+<rect x="0" y="120" width="1200" height="180" fill="#6a4e42"/>
+<g>
+<polygon points="820,150 920,108 1020,150" fill="#5c5652"/>
+<rect x="820" y="150" width="200" height="60" fill="#78726e"/>
+<g fill="#f5f2ec">
+<animateTransform attributeName="transform" type="translate" values="-160 0;180 0" dur="60s" repeatCount="indefinite"/>
+<polygon points="900,268 908,232 916,268" fill="#f5f2ec"/>
+<polygon points="928,268 936,232 944,268" fill="#282624"/>
+<circle cx="908" cy="226" r="6" fill="#d8b496"/><circle cx="936" cy="226" r="6" fill="#d8b496"/>
+<rect x="946" y="238" width="12" height="9" fill="#f5f2ec"/>
+</g>
+</g>
+<g>
+<polygon points="180,268 236,268 226,168 190,168" fill="#a8603e"/>
+<ellipse cx="208" cy="166" rx="30" ry="10" fill="#161514"/>
+<g>
+<animateTransform attributeName="transform" type="translate" values="0 -34;0 26;0 -34" dur="6s" repeatCount="indefinite"/>
+<g stroke="#2c2a28" stroke-width="4">
+<line x1="330" y1="96" x2="398" y2="128"/><line x1="330" y1="96" x2="392" y2="86"/><line x1="330" y1="96" x2="386" y2="150"/><line x1="330" y1="96" x2="404" y2="108"/><line x1="330" y1="96" x2="378" y2="66"/>
+</g>
+<circle cx="330" cy="96" r="13" fill="#c49c3c"/>
+<line x1="330" y1="109" x2="322" y2="196" stroke="#6e6c68" stroke-width="6"/>
+</g>
+<g fill="#2c2a28">
+<circle cx="216" cy="196" r="4"><animate attributeName="opacity" values="0.9;0.5;0.15;0.9" keyTimes="0;0.35;0.7;1" dur="18s" repeatCount="indefinite"/></circle>
+<circle cx="238" cy="208" r="3"><animate attributeName="opacity" values="0.8;0.4;0.1;0.8" keyTimes="0;0.35;0.7;1" dur="18s" repeatCount="indefinite"/></circle>
+<circle cx="196" cy="210" r="3"><animate attributeName="opacity" values="0.7;0.3;0.05;0.7" keyTimes="0;0.35;0.7;1" dur="18s" repeatCount="indefinite"/></circle>
+</g>
+</g>
+<g>
+<rect x="560" y="216" width="330" height="72" fill="#f6f4ee" stroke="#aaa496"/>
+<line x1="725" y1="216" x2="725" y2="288" stroke="#beb8aa" stroke-width="2"/>
+<line x1="586" y1="216" x2="586" y2="288" stroke="#c0392b" stroke-width="2"/>
+<circle cx="852" cy="234" r="13" fill="#e2ba54" stroke="#8c6c1e"/>
+<g>
+<polygon points="560,288 640,288 560,238" fill="#efece2">
+<animate attributeName="opacity" values="0;0.9;0" dur="5s" repeatCount="indefinite"/>
+</polygon>
+</g>
+</g>
+</svg>
