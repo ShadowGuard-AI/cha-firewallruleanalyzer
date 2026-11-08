@@ -1,12 +1,12 @@
-![A rooftop at last light: chimney pots along a ridge, a brush rosette by the nearest pot, coiled rods, a blank day book under a brass button, a tied soot sack, a ladder, and a tiny wedding far below, no lettering anywhere](intro-banner.png)
+![Two blank paper gatherings close up side by side on the beech bench, a blue pencil laid across the fold of the nearer one, the doubled gathering soft behind](intro-banner.png)
 
 > Day book plate: ruled columns, a column red margin at the left, the brush rosette beside this first heading only.
 
 # cha-firewallruleanalyzer
 
-![A sweep brush head from slightly above: a dense rosette of dark bristles with pale soot flecks around a brass centre boss, one rod dropping below](logo.png)
+![One folded paper gathering opened flat on a beech collating bench, a single blue pencil lying along its fold, a small stack of identical blank gatherings beside it, the heading plate](logo.png)
 
-![A rooftop along a row of chimney pots, the brush and coiled rods by the nearest pot, the open day book with the project name entered across its page, and a wedding in the street far below](banner.png)
+![A long beech collating table with folded paper gatherings laid out in sequence, a collator lifting one gathering to check its place, press machinery soft behind](banner.png)
 
 ![A rooftop in three depths: the wedding figures cross the street once slowly far below, the brush rises and descends in the nearest pot with a thinning fall of soot, and the day book page corner lifts and settles under its brass button](scene.svg)
 

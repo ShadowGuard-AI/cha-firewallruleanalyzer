@@ -3,138 +3,118 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>cha-firewallruleanalyzer: The Chimney Sweep's Lucky Brush</title>
-<meta name="description" content="Analyses rule sets from iptables and firewalld for overly permissive rules and conflicting rules, and checks a system configuration against a user supplied benchmark rule set.">
+<title>cha-firewallruleanalyzer: The Collating Table</title>
 <style>
-@font-face{font-family:'Comforter Brush';src:url('fonts/ComforterBrush.ttf') format('truetype');}
-@font-face{font-family:'Bitter';src:url('fonts/Bitter.ttf') format('truetype');}
-:root{--ledger:#dbe7f2;--panel:#fdfcf8;--green:#2e6b4f;--grey:#3d3b38;--red:#c0392b;--blue:#2c4a6e;--amber:#f0b25c}
-*{box-sizing:border-box}body{margin:0;background:var(--ledger);color:var(--grey);font-family:'Bitter',serif;line-height:1.65}
-h1,h2,h3{font-family:'Comforter Brush',cursive;color:var(--green);font-weight:400}
-.hero{display:flex;flex-direction:column;justify-content:flex-end}
-.hero img.heroimg{width:100%;height:56vh;object-fit:cover;display:block}
-.hero .in{padding:1rem 6vw 2rem;max-width:1120px;margin:0 auto;width:100%}
-.hero h1{font-size:2.4rem;margin:.4rem 0}
-.logo{width:200px}
-main{padding:0 6vw 3rem;max-width:1120px;margin:0 auto}
-nav{display:flex;gap:.9rem;flex-wrap:wrap;margin:1.2rem 0}
-.stone{display:inline-block;text-decoration:none;background:#e8e2d4;border:1px solid #b9b0a0;box-shadow:inset 0 0 0 3px #f4efe2,inset 0 0 0 4px var(--blue);color:var(--green);font-family:'Comforter Brush',cursive;font-size:1.25rem;padding:.55rem 1.4rem;text-align:center;border-radius:6px}
-.stone:hover{box-shadow:inset 0 0 0 3px #f4efe2,inset 0 0 0 5px var(--amber)}
-.stone:active{transform:translateY(1px)}
-.stone:focus-visible{outline:2px double #6e6c68;outline-offset:4px}
-a{color:var(--blue)}
-a::before{content:'';display:inline-block;width:11px;height:11px;margin-right:.45em;border-radius:50%;background:#8a6f35;vertical-align:0}
-a:hover::before{background:#e2ba54}
-a.stone::before{content:none}
-.page{background:var(--panel);border:1px solid #c4ccd4;padding:.4rem 1.8rem 1.5rem 2.6rem;margin:1.8rem 0;position:relative;background-image:repeating-linear-gradient(180deg,transparent 0 30px,rgba(44,74,110,.10) 30px 31px)}
-.page::before{content:'';position:absolute;left:1.5rem;top:0;bottom:0;width:2px;background:var(--red)}
-.page .tag{position:absolute;top:10px;right:12px;background:#efe8c8;border:1px solid #cfc49a;font-size:.8rem;padding:.1rem .55rem;transform:rotate(2deg)}
-.page h2{font-size:1.9rem;margin-top:.6rem}
-.hook{position:relative}
-.hook::before{content:'';position:absolute;left:-4.4rem;top:.4em;width:12px;height:18px;border:3px solid #6e6c68;border-bottom:none;border-radius:8px 8px 0 0}
-pre{background:#eef1f4;padding:1rem;overflow-x:auto;font-size:1rem;border-left:4px solid var(--blue)}
-.cmd{font-size:1.12rem;font-weight:700}
-.rule{height:4px;margin:2.2rem 0;background:var(--blue);position:relative}
-.rule::before{content:'';position:absolute;left:0;top:-5px;width:4px;height:14px;background:var(--red)}
-table{border-collapse:collapse;width:100%}
-td,th{padding:.55rem .7rem;border-bottom:1px solid #ccd4dc;text-align:left;vertical-align:top}
-td b{font-family:'Comforter Brush',cursive;color:var(--green);font-size:1.15rem;font-weight:400}
-.carbon{background:#f3ecd9;padding:.2rem 1.4rem 1.1rem;margin:1.3rem 0;position:relative;box-shadow:0 3px 0 -1px rgba(61,59,56,.18)}
-.carbon h3{font-size:1.5rem}
-.rednote{border-left:4px solid var(--red);padding-left:1rem}
-footer{padding:1rem 6vw 2.4rem;max-width:1120px;margin:0 auto}
+@font-face { font-family: "Gelasio"; src: url("fonts/Gelasio-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Gelasio"; src: url("fonts/Gelasio-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Asap"; src: url("fonts/Asap-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Asap"; src: url("fonts/Asap-700.woff2") format("woff2"); font-weight: 700; }
+:root {
+  --paper: #faf6ec; --cream: #f2ecdc; --ink: #33302a; --soft: #6f6a5e;
+  --press: #26221c; --beech: #8a6a3b; --blue: #2456a6; --line: #ddd3bf; --card: #ffffff;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cream); color: var(--ink); font-family: "Asap", sans-serif; line-height: 1.55; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px 64px; }
+header.hero { text-align: center; padding: 52px 0 8px; }
+img.hero-logo { width: min(430px, 82vw); border-radius: 10px; box-shadow: 0 10px 34px rgba(51,48,42,.22); }
+h1, h2 { font-family: "Gelasio", serif; line-height: 1.15; }
+h1 { font-size: clamp(28px, 5vw, 46px); margin: 26px 0 6px; }
+.tagline { color: var(--soft); font-size: 19px; margin: 0 auto; max-width: 660px; }
+.btns { margin: 22px 0 6px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+a.btn { font-family: "Gelasio", serif; text-decoration: none; padding: 11px 22px; border-radius: 999px; border: 2px solid var(--beech); color: var(--beech); background: transparent; }
+a.btn.solid { background: var(--blue); border-color: var(--blue); color: #fff; }
+figure { margin: 30px 0; }
+figure img { width: 100%; border-radius: 10px; display: block; box-shadow: 0 8px 28px rgba(51,48,42,.18); }
+figcaption { color: var(--soft); font-size: 15px; text-align: center; margin-top: 9px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 34px 0; }
+.fact { background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--blue); border-radius: 8px; padding: 14px 16px; }
+.fact b { display: block; font-family: "Gelasio", serif; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; color: var(--press); margin-bottom: 4px; }
+section { margin: 38px 0; }
+h2 { font-size: 27px; margin: 0 0 12px; border-bottom: 2px solid var(--line); padding-bottom: 7px; }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+pre { background: #26221c; color: #f3ecdd; padding: 15px 18px; border-radius: 8px; overflow-x: auto; font-size: 14.5px; }
+table { border-collapse: collapse; width: 100%; background: var(--card); }
+th, td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top; }
+th { font-family: "Gelasio", serif; background: var(--cream); }
+.hold { background: #eef2fb; border: 1px solid #c3cfe8; border-left: 6px solid var(--blue); border-radius: 8px; padding: 16px 20px; }
+.hold h2 { border: none; padding: 0; }
+.hold ul { margin: 8px 0 4px; padding-left: 20px; }
+footer { margin-top: 52px; border-top: 2px solid var(--line); padding-top: 16px; color: var(--soft); font-size: 14.5px; text-align: center; }
 </style>
 </head>
 <body>
+<div class="wrap">
 <header class="hero">
-<img class="heroimg" src="assets/intro-banner.png" alt="A rooftop at last light: chimney pots along a ridge, a brush rosette leaning by the nearest pot, coiled rods, a blank day book under a brass button, a tied soot sack, a ladder, and a tiny wedding far below, no lettering anywhere">
-<div class="in">
-<img class="logo" src="assets/logo.png" alt="A sweep brush head from slightly above: a dense rosette of dark bristles with pale soot flecks around a brass centre boss, one rod dropping below">
-<h1>cha-firewallruleanalyzer</h1>
-<p>A sweep day book kept in ruled columns. Two modes are stated first and kept apart, then the command lines, the parameter ledger, the findings with their severities, and the limits of the search written in column red.</p>
-<nav>
-<a class="stone" href="#firewall">Check a Rule File</a>
-<a class="stone" href="#benchmark">Test Against a Benchmark</a>
-<a class="stone" href="#benchmark">Validate With a Schema First</a>
-<a class="stone" href="#ledger">Show Help</a>
-</nav>
-</div>
+  <img class="hero-logo" src="assets/logo.png" alt="One folded paper gathering opened flat on a beech collating bench, a single blue pencil lying along its fold, a small stack of identical blank gatherings beside it">
+  <h1>cha-firewallruleanalyzer</h1>
+  <p class="tagline">The Collating Table. A command line tool that works entirely on saved files, the way a collator works through gathered sheets: it reads a firewall configuration file in sequence and pulls out the doubled sheet, the sheet out of order, and the rule that accepts too much.</p>
+  <div class="btns">
+    <a class="btn solid" href="https://github.com/ShadowGuard-AI/cha-firewallruleanalyzer">The repository</a>
+    <a class="btn" href="https://github.com/ShadowGuard-AI/cha-firewallruleanalyzer/blob/main/main.py">main.py</a>
+  </div>
 </header>
-<main>
-<section class="page">
-<span class="tag">opening entry</span>
-<h2 class="hook">Two Modes, Kept Apart</h2>
-<p>This program does two jobs, and the page never blends them. In firewall mode it analyses rule sets from iptables and firewalld to find overly permissive rules and rules that conflict with each other, where conflict covers duplicate rules and rules sharing the same chain, source, destination, protocol, and port while carrying different actions, and it outputs a report with suggested improvements, relying on parsing firewall configuration files with regular expressions.</p>
-<p>In benchmark mode it checks a system configuration against a user supplied YAML or JSON rule set, identifies deviations from the settings in that rule set, and reports the remediation text from the rule set.</p>
-<p>A file with no iptables or firewall-cmd text is reported as type not detected and the run exits non-zero.</p>
-</section>
-<div class="rule"></div>
-<section class="page">
-<span class="tag">install</span>
-<h2 class="hook">Getting the Code</h2>
-<pre>git clone https://github.com/ShadowGuard-AI/cha-firewallruleanalyzer.git</pre>
-<p>Printed exactly, with its organisation correctly hyphenated. The README gives no change of directory and no dependency install, although the repository carries requirements.txt naming jsonschema at 4.17.0 or above and PyYAML at 6.0 or above. That gap is recorded as a gap. Nothing is invented to fill it on this page.</p>
-<p><a href="https://github.com/ShadowGuard-AI/cha-firewallruleanalyzer">The repository on GitHub</a></p>
-</section>
-<div class="rule"></div>
-<section class="page">
-<span class="tag">commands</span>
-<h2 class="hook">Two Command Lines</h2>
-<pre class="cmd">python3 main.py firewall &lt;firewall_config&gt; [--output OUTPUT]
-python3 main.py benchmark &lt;config_file&gt; &lt;benchmark_file&gt; [--schema SCHEMA] [--output OUTPUT]</pre>
-<p>Under the first line: firewall_config is the path to a configuration file holding iptables or firewalld rules, and the report defaults to firewall_report.txt.</p>
-<p>Under the second line: config_file is the system configuration to analyse, benchmark_file is the YAML or JSON benchmark, --schema is an optional path to a JSON schema used for validation, and the report defaults to benchmark_report.txt. These are the only command lines on the page.</p>
-</section>
-<div class="rule"></div>
-<section class="page" id="ledger">
-<span class="tag">ledger</span>
-<h2 class="hook">Parameter Ledger</h2>
-<table>
-<tr><td><b>-h, --help</b></td><td>Show the help message and exit. Works at the top level and on each subcommand.</td></tr>
-<tr><td><b>firewall</b></td><td>firewall_config, the path to the firewall configuration file. --output OUTPUT, the report path, default firewall_report.txt.</td></tr>
-<tr><td><b>benchmark</b></td><td>config_file, the system configuration to analyse. benchmark_file, the YAML or JSON benchmark. --schema SCHEMA, an optional JSON schema path. --output OUTPUT, the report path, default benchmark_report.txt.</td></tr>
-<tr><td><b>no subcommand</b></td><td>The parser prints the help text and exits with status 1. The README does not mention this behaviour, and the code performs it every time.</td></tr>
-</table>
-</section>
-<div class="rule"></div>
-<section class="page" id="firewall">
-<span class="tag">findings</span>
-<h2 class="hook">The Firewall Findings</h2>
-<p>An exact accept everything line in the INPUT chain, -A INPUT -j ACCEPT, is High, with advice to review and restrict the INPUT chain to specific ports and protocols.</p>
-<p>A rule in the shape -A INPUT -p tcp or udp --dport a port -j ACCEPT is Medium, all traffic accepted on that port, with advice to restrict to specific source IPs.</p>
-<p>Duplicate rule lines among the parsed lines are Medium, counted, with advice to state each rule once.</p>
-<p>Two rules that agree on chain, source, destination, protocol, and destination port but differ in their -j action are High, with advice to keep one action for that combination.</p>
-<p>On the firewalld side, zone=public is Medium, public zone in use, with advice to review and restrict the public zone or use a more restrictive zone.</p>
-<div class="carbon"><h3>Type Not Detected Ends the Run</h3>
-<p>A file with no iptables or firewall-cmd text is reported as type not detected, the report carries that finding, and the run exits non-zero.</p></div>
-<h2 class="hook">What the Search Cannot See</h2>
-<div class="rednote">
-<p>Detection is a substring search over the whole file, so a comment mentioning iptables sends a firewalld file down the iptables branch, and an iptables-save file whose text never contains that word falls through to type not detected.</p>
-<p>The accept everything pattern wants the action immediately after the chain name, so an accept rule carrying any qualifier is not caught by that pattern.</p>
+
+<figure>
+  <img src="assets/intro-banner.png" alt="Two blank paper gatherings close up side by side on the beech bench, a blue pencil laid across the fold of the nearer one, the doubled gathering soft behind">
+  <figcaption>Where the sequence breaks: two gatherings side by side, checked against their place.</figcaption>
+</figure>
+
+<div class="facts">
+  <div class="fact"><b>Modes</b>Two subcommands: firewall, on a saved rule file, and benchmark, on a configuration text against a supplied rule set</div>
+  <div class="fact"><b>Reports</b>Written to firewall_report.txt or benchmark_report.txt unless --output names another path</div>
+  <div class="fact"><b>Dependencies</b>jsonschema 4.17.0 or later and PyYAML 6.0 or later</div>
+  <div class="fact"><b>No subcommand</b>Prints the help text and exits 1, every time</div>
 </div>
-<div class="carbon"><h3>Interfaces Are Not Part of the Key</h3>
-<p>The conflict grouping leaves out interface, source port, and match extensions, so an ACCEPT on one interface and a DROP on another can be grouped as a conflict that is not one.</p></div>
+
+<section>
+  <h2>Usage</h2>
+  <pre>python3 main.py firewall &lt;firewall_config&gt; [--output OUTPUT]
+python3 main.py benchmark &lt;config_file&gt; &lt;benchmark_file&gt; [--schema SCHEMA] [--output OUTPUT]</pre>
+  <table>
+    <tr><th>Part</th><th>What it does</th></tr>
+    <tr><td><code>firewall_config</code></td><td>Path to the firewall configuration file (iptables or firewalld).</td></tr>
+    <tr><td><code>config_file</code></td><td>Path to the system configuration file to analyze in benchmark mode.</td></tr>
+    <tr><td><code>benchmark_file</code></td><td>Path to the YAML or JSON benchmark file.</td></tr>
+    <tr><td><code>--schema</code></td><td>Path to the JSON schema file (optional, used for validation of the benchmark file).</td></tr>
+    <tr><td><code>--output</code></td><td>Path to save the report (defaults: firewall_report.txt, benchmark_report.txt).</td></tr>
+    <tr><td><code>-h</code>, <code>--help</code></td><td>Show help message and exit, at the top level and on each subcommand.</td></tr>
+  </table>
 </section>
-<div class="rule"></div>
-<section class="page" id="benchmark">
-<span class="tag">benchmark</span>
-<h2 class="hook">The Benchmark Findings</h2>
-<p>Benchmark rules are read from a rules list. Each rule carries a description, a severity defaulting to Info, and a recommendation, with No Description and No Recommendation standing where a rule omits them.</p>
-<p>A string check is searched as a regular expression through the configuration text, and a failed search becomes a finding carrying the rule own recommendation. A bad pattern costs that one rule its check and becomes a finding about the invalid regex. It does not end the run.</p>
-<p>A dictionary check is read only for file_exists. Any other check type draws a warning and no finding.</p>
-<p>The benchmark file must hold a mapping at its top level. Its format is chosen by its file ending, YAML for .yaml and .yml and JSON for .json. When a schema is supplied and validation fails, the run stops with an error rather than reporting partial results.</p>
+
+<figure>
+  <img src="assets/banner.png" alt="A long beech collating table with folded paper gatherings laid out in sequence, a collator lifting one gathering to check its place, press machinery soft behind">
+  <figcaption>The table where every gathering is checked against the sequence it should stand in.</figcaption>
+</figure>
+
+<section>
+  <h2>Findings and severities</h2>
+  <table>
+    <tr><th>Finding</th><th>Severity</th></tr>
+    <tr><td>An exact -A INPUT -j ACCEPT line</td><td>High</td></tr>
+    <tr><td>A rule accepting one TCP or UDP port</td><td>Medium</td></tr>
+    <tr><td>Duplicate rule lines, counted</td><td>Medium</td></tr>
+    <tr><td>Two rules agreeing on chain, source, destination, protocol, and destination port but differing in action</td><td>High</td></tr>
+    <tr><td>zone=public in use</td><td>Medium</td></tr>
+  </table>
+  <p>Every report writes one block per finding, closed by a line of twenty dashes. A report with no findings reads No issues found.</p>
 </section>
-<div class="rule"></div>
-<section class="page">
-<span class="tag">report</span>
-<h2 class="hook">How the Report Is Written</h2>
-<p>Every report writes one block per finding: Description, Severity, and Recommendation, plus a Check Failed line where one exists, each block closed by a line of twenty dashes. A report with no findings reads No issues found.</p>
-<div class="carbon"><h3>A Report That Cannot Be Written Ends the Run</h3>
-<p>A report that cannot be written raises an error and the run exits 1. An earlier habit of swallowing that error would have let a run claim completion with no report on disk, and the page states the current behaviour in full for that reason.</p></div>
-<h2 class="hook">MIT License</h2>
-<pre>MIT License. Copyright (c) 2025-2026 Gavin K (@Epsilon0xCell). See the LICENSE file for the full text.</pre>
+
+<section class="hold">
+  <h2>Stated limits</h2>
+  <ul>
+    <li>The firewall type is detected by a substring search over the whole file, so a comment mentioning iptables sends a firewalld file down the iptables branch. A file with no iptables or firewall-cmd text is reported as type not detected, and the run exits non-zero after the report is written.</li>
+    <li>The accept everything pattern wants the action immediately after the chain name, so an accept rule carrying any qualifier escapes it and is judged only by the port pattern.</li>
+    <li>The conflict grouping leaves interface, source port, and match extensions out of the key, so an ACCEPT on one interface and a DROP on another can be grouped as a conflict that is not one.</li>
+    <li>In benchmark mode a string check is searched as a regular expression, and a failed search becomes a finding carrying the rule's own recommendation. An invalid pattern costs that one rule its check and becomes a finding about the regex. A dictionary check is read only for file_exists; any other check type draws a warning and no finding.</li>
+    <li>Rule severity defaults to Info, with No Description and No Recommendation standing where a rule omits them. The benchmark must hold a mapping at its top level, its format is chosen by its file ending, a schema validation failure stops the run, and a report that cannot be written exits 1.</li>
+    <li>Its near twin by subject collects from the live host with substring tests; this one parses files, counts duplicates, groups conflicts, and runs a benchmark mode the other does not have. The two share no art, fonts, or copy.</li>
+  </ul>
 </section>
-</main>
-<footer><p>Theme: The Chimney Sweep's Lucky Brush. Type: Comforter Brush for headings, Bitter for reading, both SIL Open Font License 1.1. The lettering reference Break Brush was reference only and is not embedded.</p></footer>
+
+<footer>
+  <p>cha-firewallruleanalyzer is distributed under the MIT License, see LICENSE in the repository. Site type is set in Gelasio and Asap, self-hosted under the SIL Open Font License.</p>
+</footer>
+</div>
 </body>
 </html>
